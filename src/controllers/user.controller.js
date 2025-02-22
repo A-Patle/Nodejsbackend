@@ -142,8 +142,10 @@ const logOut = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+      // $set: {
+        // refreshToken: null, // this does not remove the refreshToken completely it  set value as null
+        refreshToken: 1, // this removes the refreshToken from document completely
       },
     },
     {
@@ -210,7 +212,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const changeCurrentPassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassoword } = req.body;
+  const { oldPassword, newPassword } = req.body;
 
   const user = await User.findById(req.user?._id);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
@@ -218,7 +220,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid old password");
   }
 
-  user.password = newPassoword;
+  user.password = newPassword;
   await user.save({ validateBeforeSave: false });
 
   return res
@@ -234,7 +236,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     );
 });
 
-const updateAccoountDetails = asyncHandler(async (req, res) => {
+const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
 
   if (!fullName || !email) {
@@ -342,7 +344,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
           $size: "$subscribers",
         },
         channelsSubscribedTo: {
-          $size: "subscribedTo",
+          $size: "$subscribedTo",
         },
         isSubscribed: {
           $cond: {
@@ -367,7 +369,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     },
   ]);
 
-  console.log("channel", channel);
+  // console.log("channel", channel);
   if (!channel?.length) {
     throw new ApiError(404, "Channel does no exists");
   }
@@ -421,7 +423,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(user, "user details");
+  // console.log(user, "user details");
 
   return res
     .status(200)
@@ -441,7 +443,7 @@ export {
   refreshAccessToken,
   changeCurrentPassword,
   getCurrentUser,
-  updateAccoountDetails,
+  updateAccountDetails,
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
