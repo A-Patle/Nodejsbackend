@@ -143,7 +143,7 @@ const logOut = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $unset: {
-      // $set: {
+        // $set: {
         // refreshToken: null, // this does not remove the refreshToken completely it  set value as null
         refreshToken: 1, // this removes the refreshToken from document completely
       },
