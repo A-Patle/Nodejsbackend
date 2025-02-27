@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
-  addComments,
-  deleteComments,
+  addComment,
+  deleteComment,
   getVideoComments,
-  updateComments,
+  updateComment,
 } from "../controllers/comment.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -11,8 +11,8 @@ const router = Router();
 
 router.use(verifyJWT); // apply verifyjwt middleware to all routes in this file
 
-router.route("/:videoId").get(getVideoComments).post(addComments);
+router.route("/:videoId").get(getVideoComments).post(addComment);
 
-router.route("/c/:commentId").delete(deleteComments).patch(updateComments);
+router.route("/c/:commentId").delete(deleteComment).patch(updateComment);
 
 export default router;
